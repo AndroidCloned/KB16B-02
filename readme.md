@@ -6,7 +6,9 @@ It also replaces the default menu + splash screen with something more fun.
 
 Follow the normal installation procedure for any other keyboard using QMK (install QMK MSYS + QMK Tool kit for Windows) There are some other tweaks that were made to the base board config/drivers (deeper in the QMK install directory than this repo goes) that were made to change the screen brightness + timeout. Those are discussed in the "Special Considerations" section.
 
-Since this repo **does not fork the base QMK repo** please make sure that you use its contents to replace: `qmk_firmware\keyboards\doio\kb16`
+Since this repo **does not fork the base QMK repo** please make sure that you use its contents to replace: `qmk_firmware\keyboards\doio\kb16`. **This will clobber your default kb16 configuration (since some of its customization exists outside of the keymap files themselves), so please proceed with caution**
+
+**Note:** This firmware is specifically for the REV2 version of the board, so the you should be building out of the `kb16\rev2\keymaps\frogimancer` directory
 
 # Keymaps
 
