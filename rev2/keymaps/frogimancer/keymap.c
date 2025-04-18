@@ -17,6 +17,9 @@
 
 #include QMK_KEYBOARD_H
 
+// random number generator
+# include <stdlib.h>
+
 // OLED animation
 #include "./lib/layer_status/layer_status.h"
 
@@ -43,6 +46,9 @@ const struct RGB_VAL PLAY_GREEN = {.r = 0x00, .g = 0xFF, .b = 0x00};
 const struct RGB_VAL STOP_RED = {.r = 0xFF, .g = 0x00, .b = 0x00};
 const struct RGB_VAL CONTINUE_BLUE = {.r = 0x00, .g = 0x99, .b = 0xFF};
 
+// jiggler max distance from center
+#define MAX_JIGGLE_DISTANCE 10
+
 // *****************************************************
 // *****************************************************
 // ################## COLOR MAP(s) #####################
@@ -58,38 +64,52 @@ const struct RGB_VAL PROGMEM layer_1_color_map[16] = {
 };
 
 const struct RGB_VAL PROGMEM layer_2_color_map[16] = {
-    DEFAULT_YELLOW, DEFAULT_BLACK, CONTINUE_BLUE, PLAY_GREEN,
-    CONTINUE_BLUE, DEFAULT_BLACK, CONTINUE_BLUE, PLAY_GREEN,
-    PLAY_GREEN, DEFAULT_BLACK, CONTINUE_BLUE, DEFAULT_YELLOW,
-    DEFAULT_GREY, DEFAULT_BLACK, STOP_RED, STOP_RED
-};
-
-const struct RGB_VAL PROGMEM layer_3_color_map[16] = {
     DEFAULT_GREEN, DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_MAGENTA,
     DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_MAGENTA,
     DEFAULT_GREEN, DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_MAGENTA,
     DEFAULT_GREEN, DEFAULT_GREEN, DEFAULT_GREEN, DEFAULT_GREEN,
 };
 
+const struct RGB_VAL PROGMEM layer_3_color_map[16] = {
+    DEFAULT_YELLOW, DEFAULT_BLACK, CONTINUE_BLUE, PLAY_GREEN,
+    CONTINUE_BLUE, DEFAULT_BLACK, CONTINUE_BLUE, PLAY_GREEN,
+    PLAY_GREEN, DEFAULT_BLACK, CONTINUE_BLUE, DEFAULT_YELLOW,
+    DEFAULT_GREY, DEFAULT_BLACK, STOP_RED, STOP_RED
+};
+
 const struct RGB_VAL PROGMEM layer_4_color_map[16] = {
     DEFAULT_YELLOW, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_MAGENTA,
     DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK,
     DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK,
-    STOP_RED, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK,
+    STOP_RED, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_MAGENTA,
+};
+
+const struct RGB_VAL PROGMEM busy_0_map[16] = {
+    DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK,
+    DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_MAGENTA, DEFAULT_MAGENTA,
+    DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_MAGENTA, DEFAULT_MAGENTA,
+    DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK,
 };
 
 const struct RGB_VAL PROGMEM busy_1_map[16] = {
     DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK,
-    DEFAULT_BLACK, DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_BLACK,
-    DEFAULT_BLACK, DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_BLACK,
+    DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_BLACK, DEFAULT_BLACK,
+    DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_BLACK, DEFAULT_BLACK,
     DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK,
 };
 
 const struct RGB_VAL PROGMEM busy_2_map[16] = {
-    DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_MAGENTA,
-    DEFAULT_MAGENTA, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_MAGENTA,
-    DEFAULT_MAGENTA, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_MAGENTA,
-    DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_MAGENTA,
+    DEFAULT_BLACK, DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_BLACK,
+    DEFAULT_BLACK, DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_BLACK,
+    DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK,
+    DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK,
+};
+
+const struct RGB_VAL PROGMEM busy_3_map[16] = {
+    DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK,
+    DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK, DEFAULT_BLACK,
+    DEFAULT_BLACK, DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_BLACK,
+    DEFAULT_BLACK, DEFAULT_MAGENTA, DEFAULT_MAGENTA, DEFAULT_BLACK,
 };
 
 const struct RGB_VAL PROGMEM sleep_map[16] = {
@@ -115,8 +135,9 @@ bool to_be_reset = false;
 
 bool look_busy_on;
 bool look_busy_state;
+uint8_t look_busy_choice = 0;
 uint16_t look_busy_timer = false;
-uint16_t look_busy_interval = 500;
+uint16_t look_busy_interval = 300;
 
 bool win_hold_on;
 uint16_t win_hold_timer = false;
@@ -141,11 +162,17 @@ bool animation_done;
 uint16_t animation_timer = false;
 uint16_t animation_interval = 5000;
 
+uint8_t left_stretch = 0;
+uint8_t right_stretch = 0;
+uint8_t up_stretch = 0;
+uint8_t down_stretch = 0;
+
 // *****************************************************
 // Declarations bc order dumbness
 // *****************************************************
 
 void set_layer_map(const struct RGB_VAL*);
+uint8_t one_of_four(void);
 
 // *****************************************************
 // Macro names and what have you
@@ -235,6 +262,115 @@ void suspend_wakeup_init_user(void) {
     sleep_mode_on = false;
     sleep_mode_timer = timer_read();
     inactive_half_minutes = 0;
+}
+
+// *****************************************************
+// Random choice generator to pick a value between 0 and 3
+// *****************************************************
+uint8_t one_of_four(void){
+    uint8_t choice = 0;
+    uint16_t random = rand();
+
+    // Boolean and with 11 to get only bottom two bits
+    choice = random & 0x03;
+    return choice;
+}
+
+uint8_t elastic_bias(uint8_t choice){
+    uint8_t new_choice = choice;
+    
+    // Roll random number
+    uint8_t rand_num = rand() % (MAX_JIGGLE_DISTANCE);
+    
+    // if random number is above stretch, let it stay
+    // if below, invert the direction
+    // this more or less guarentees that inversion gets more likely as we get further from center
+    switch(choice){
+        case 0x00: 
+            if (rand_num < up_stretch){
+                new_choice = 0x01;
+            }
+            break;
+        case 0x01: 
+            if (rand_num < down_stretch){
+                new_choice = 0x00;
+            }
+            break;
+        case 0x02: 
+            if (rand_num < left_stretch){
+                new_choice = 0x03;
+            }
+            break;
+        case 0x03: 
+            if (rand_num < right_stretch){
+                new_choice = 0x02;
+            }
+            break;
+        default:
+            break;
+    }
+
+    // update stretch after new choice is made -> inversion results in decreased stretch
+    switch(new_choice){
+        case 0x00:
+            up_stretch += 1;
+            down_stretch -= 1;
+            break;
+        case 0x01:
+            down_stretch += 1;
+            up_stretch -= 1;
+            break;
+        case 0x02:
+            left_stretch += 1;
+            right_stretch -= 1;
+            break;
+        case 0x03:
+            right_stretch += 1;
+            left_stretch -=1;
+            break;
+        default:
+            break;
+    }
+
+    // Enforce bounds
+    // yeah yeah i know this is bad and lazy
+    if (up_stretch > 254){
+        // Back to zero on underflow
+        up_stretch = 0;
+    }
+    else if (up_stretch > MAX_JIGGLE_DISTANCE){
+        // hold at max
+        up_stretch = MAX_JIGGLE_DISTANCE;
+    }
+
+    if (down_stretch > 254){
+        // Back to zero on underflow
+        down_stretch = 0;
+    }
+    else if (down_stretch > MAX_JIGGLE_DISTANCE){
+        // hold at max
+        down_stretch = MAX_JIGGLE_DISTANCE;
+    }
+
+    if (left_stretch > 254){
+        // Back to zero on underflow
+        left_stretch = 0;
+    }
+    else if (left_stretch > MAX_JIGGLE_DISTANCE){
+        // hold at max
+        left_stretch = MAX_JIGGLE_DISTANCE;
+    }
+
+    if (right_stretch > 254){
+        // Back to zero on underflow
+        right_stretch = 0;
+    }
+    else if (right_stretch > MAX_JIGGLE_DISTANCE){
+        // hold at max
+        right_stretch = MAX_JIGGLE_DISTANCE;
+    }
+
+    return new_choice;
 }
 
 // *****************************************************
@@ -434,6 +570,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 look_busy_on ^= 1;
                 look_busy_timer = timer_read();
+
+                // Reset elastic constants
+                up_stretch = 0;
+                down_stretch = 0;
+                left_stretch = 0;
+                right_stretch = 0;
             } 
             break;
         case M_TAB_SCROLL_UP:
@@ -626,28 +768,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                 M_TEXT_EXTRACT, M_COLOR_PICKER, M_ALWAYS_TOP, M_LOOK_BUSY
             ),
 
-/* LAYER 2 - ide shortcuts
-       ┌───┬───┬───┬───┐   ┌───┐ ┌───┐
-       │EXP│   │OVR│RUN│   │   │ │   │
-       ├───┼───┼───┼───┤   └───┘ └───┘
-       │SRC│   │IN │DBG│
-       ├───┼───┼───┼───┤
-       │DBG│   │OUT│RR │      ┌───┐
-       ├───┼───┼───┼───┤      │   │
-       │SHW│   │TGB│STP│      └───┘
-       └───┴───┴───┴───┘
-
-*/
-    /*  Row:    0         1        2        3         4      */
-    [_2] = LAYOUT(
-                M_EXPLORER, _______, M_STEP_OVER, M_RUN, TO(_1),
-                M_SEARCH, _______, M_STEP_INTO, M_RUN_DEBUG, _______,
-                M_DEBUG_MENU, _______, M_STEP_OUT, M_RERUN_DEBUG, M_WIN_D,
-                M_SHOW_HIDE, _______, M_TOGGLE_BREAKPOINT, M_STOP_DEBUG
-            ),
-    
-
-/* LAYER 3 - Numpad
+/* LAYER 2 - Numpad
 
        ┌───┬───┬───┬───┐   ┌───┐ ┌───┐
        │ + │ 1 │ 4 │ 7 │   │TO1│ │   │
@@ -660,22 +781,45 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        └───┴───┴───┴───┘
 */
     /*  Row:    0        1        2        3        4       */
-    [_3] = LAYOUT(
+    [_2] = LAYOUT(
                 KC_KP_PLUS,     KC_KP_1,    KC_KP_4,    KC_KP_7,     TO(_1),
                 KC_KP_0,     KC_KP_2,    KC_KP_5,    KC_KP_8,     _______,
                 KC_KP_DOT,     KC_KP_3,    KC_KP_6,   KC_KP_9,   M_WIN_D,
                 KC_KP_ENTER, KC_KP_SLASH, KC_KP_ASTERISK, KC_KP_MINUS
             ),
 
+
+/* LAYER 3 - ide shortcuts
+       ┌───┬───┬───┬───┐   ┌───┐ ┌───┐
+       │EXP│   │OVR│RUN│   │   │ │   │
+       ├───┼───┼───┼───┤   └───┘ └───┘
+       │SRC│   │IN │DBG│
+       ├───┼───┼───┼───┤
+       │DBG│   │OUT│RR │      ┌───┐
+       ├───┼───┼───┼───┤      │   │
+       │SHW│   │TGB│STP│      └───┘
+       └───┴───┴───┴───┘
+
+*/
+    /*  Row:    0         1        2        3         4      */
+    [_3] = LAYOUT(
+                M_EXPLORER, _______, M_STEP_OVER, M_RUN, TO(_1),
+                M_SEARCH, _______, M_STEP_INTO, M_RUN_DEBUG, _______,
+                M_DEBUG_MENU, _______, M_STEP_OUT, M_RERUN_DEBUG, M_WIN_D,
+                M_SHOW_HIDE, _______, M_TOGGLE_BREAKPOINT, M_STOP_DEBUG
+            ),
+    
+
+
 /* LAYER 4
        ┌───┬───┬───┬───┐   ┌───┐ ┌───┐
-       │Spi│Spd│   │   │   │   │ │TO0│
+       │RST│   │   │NLK│   │   │ │TO0│
        ├───┼───┼───┼───┤   └───┘ └───┘
-       │Sai│Sad│   │   │
+       │   │   │   │   │
        ├───┼───┼───┼───┤
-       │Tog│Mod│Hui│   │      ┌───┐
+       │   │   │   │   │      ┌───┐
        ├───┼───┼───┼───┤      │   │
-       │   │Vai│Hud│Vad│      └───┘
+       │SLP│   │   │SHT│      └───┘
        └───┴───┴───┴───┘
 */
     /*  Row:    0        1        2        3        4        */
@@ -683,7 +827,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                 M_SLEEP_PAD, _______, _______, M_QMK_RESET, _______,
                 _______, _______, _______, _______, TO(_1),
                 _______, _______, _______, _______, _______,
-                M_SLEEP_ALL, _______, _______, _______
+                M_SLEEP_ALL, _______, _______, KC_NUM_LOCK
             ),
 };
 
@@ -714,12 +858,25 @@ bool rgb_matrix_indicators_user(void) {
     // Look busy macro flashinghandling
     else if (look_busy_on) {
         // Flashing animation for active look busy macro
-        if (look_busy_state) {
+        switch (look_busy_choice)
+        {
+        case 0:
+            set_layer_map(busy_0_map);
+            break;
+        case 1:
             set_layer_map(busy_1_map);
-        }
-        else {
+            break;
+        case 2:
             set_layer_map(busy_2_map);
+            break;
+        case 3:
+            set_layer_map(busy_3_map);
+            break;
+        
+        default:
+            break;
         }
+
     }
     // normal layer colormaps
     else {
@@ -752,13 +909,34 @@ bool rgb_matrix_indicators_user(void) {
     if (look_busy_on && timer_elapsed(look_busy_timer) >= look_busy_interval) {
         look_busy_timer = timer_read();
         look_busy_state ^= 1;
+        
+        // Mash control alternatively
         if (look_busy_state) {
             SEND_STRING(SS_TAP(X_LEFT_CTRL));
-            SEND_STRING(SS_TAP(X_MS_RIGHT) SS_DELAY(100) SS_TAP(X_MS_DOWN) SS_DELAY(100));
         }
-        else {
-            SEND_STRING(SS_TAP(X_LEFT_ALT));
-            SEND_STRING(SS_TAP(X_MS_LEFT) SS_DELAY(100) SS_TAP(X_MS_UP) SS_DELAY(100));
+
+        // Choose direction for wiggle 
+        look_busy_choice = one_of_four();
+        // Use elastic rule to keep it in one area
+        look_busy_choice = elastic_bias(look_busy_choice);
+        
+        switch (look_busy_choice)
+        {
+        case 0:
+            SEND_STRING(SS_TAP(X_MS_UP)    SS_DELAY(10) SS_TAP(X_MS_UP)    SS_DELAY(100));
+            break;
+        case 1:
+            SEND_STRING(SS_TAP(X_MS_DOWN)  SS_DELAY(10) SS_TAP(X_MS_DOWN)  SS_DELAY(100));
+            break;
+        case 2:
+            SEND_STRING(SS_TAP(X_MS_LEFT)  SS_DELAY(10) SS_TAP(X_MS_LEFT)  SS_DELAY(100));
+            break;
+        case 3:
+            SEND_STRING(SS_TAP(X_MS_RIGHT) SS_DELAY(10) SS_TAP(X_MS_RIGHT) SS_DELAY(100));
+            break;
+        
+        default:
+            break;
         }
     }
 
@@ -782,7 +960,7 @@ bool rgb_matrix_indicators_user(void) {
 
     // Sleep mode logic
     // Only update timers if sleep mode is NOT on
-    if (!sleep_mode_on) {
+    if (!sleep_mode_on && !look_busy_on) {
         // Check if the number of half minutes we are expecting has passed, if so, sleep
         if (inactive_half_minutes >= sleep_mode_start_interval){
             enter_sleep_mode();

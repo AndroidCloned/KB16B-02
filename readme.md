@@ -1,10 +1,10 @@
 # Frogimancer Firmware Overview
 
-This firmware for the Doio 16 Key + 3 Knob Macro Pad (Megalodon) is designed around adding some nice navigation features that are useful for day to day Windows use + development work. It was developed with the idea of rotating the pad 90 degrees to have the knobs on the top so that the pad can be used as a num pad if desired.
+This firmware for the Doio 16 Key + 3 Knob Macro Pad (Megalodon), is designed around adding some nice navigation features that are useful for day to day Windows use + development work. It was designed with the idea of rotating the pad 90 degrees to have the knobs on the top so that the pad can be used as a num pad if desired, but with the knobs in a more reasonable place.
 
-It also replaces the default menu + splash screen with something more fun.
+It also replaces the default menu + splash screen with something more fun. The menu uses a more "Pikmin" like aesthetic, because why waste the tiny screen just showing boring numbers?
 
-Follow the normal installation procedure for any other keyboard using QMK (install QMK MSYS + QMK Tool kit for Windows) There are some other tweaks that were made to the base board config/drivers (deeper in the QMK install directory than this repo goes) that were made to change the screen brightness + timeout. Those are discussed in the "Special Considerations" section.
+Follow the normal installation procedure for any other keyboard using QMK (install QMK MSYS + QMK Tool kit for Windows). There are some other tweaks that were made to the base board config/drivers (deeper in the QMK install directory than this repo goes) that were made to change the screen brightness + timeout. Those are discussed in the "Special Considerations" section.
 
 Since this repo **does not fork the base QMK repo** please make sure that you use its contents to replace: `qmk_firmware\keyboards\doio\kb16`
 
@@ -35,13 +35,30 @@ The first layer is focused on letting the user quickly navigate around in Window
 
 ```
 
-The "W\<NUMBER\>" macros emulate the "WIN + \<NUM\>" command, but hold down the WIN key for a moment so that the user can rapidly tap the same key to scroll through instances of the same app. For example, if you have 4 explorer windows open, you can tap the macro twice to get to window two. There is also a quick key for the PowerToys "Launcher", as well as keys to switch windows desktops (a la "WIN+ \<ArrowKey\>").
+The "W\<NUMBER\>" macros emulate the "WIN + \<NUM\>" command, but hold down the WIN key for a moment so that the user can rapidly tap the same key to scroll through instances of the same app. For example, if you have 4 file explorer windows open, you can tap the macro key twice to get to window two. There is also a quick key for the PowerToys "Launcher", as well as keys to switch windows desktops (a la "WIN+ \<ArrowKey\>").
 
-The right most column has several "utilities". The first is a mouse jiggler (which is a toggle and will flash the light so you know its on), then below are the PowerToys applets for "Always On Top", "Color Picker", and "Text Extractor".
+The right most column has several "utilities". The first is a custom mouse jiggler (which is a toggle and will flash the lights so you know its on), then below are the PowerToys applets for "Always On Top", "Color Picker", and "Text Extractor".
 
-## Layer 2 - VS/VSCode Run + Debug
+## Layer 2 - Numpad
 
-Second layer is mostly for making dealing with VS Code and Visual Studio's run and debugger shortcuts easier. These assume that you have the the "Run" and "Run w/ Debug" shortcuts rebound **in your IDE** such that "Run" is F5, and "Run w/ Debug" is CTRL+5. This is a preference of mine, so switch them in the firmware if you prefer it the other way around.
+Its a num pad, congratulations TKL users! That said, the function keys are in weird spots since we dont have the normal key layout.
+
+```
+       ┌───┬───┬───┬───┐
+       │ 7 │ 8 │ 9 │SUB│
+       ├───┼───┼───┼───┤
+       │ 4 │ 5 │ 6 │MUL│
+       ├───┼───┼───┼───┤
+       │ 1 │ 2 │ 3 │DIV│
+       ├───┼───┼───┼───┤
+       │ADD│ 0 │ . │ENT│
+       └───┴───┴───┴───┘
+
+```
+
+## Layer 3 - VS/VSCode Run + Debug
+
+The second layer is mostly for dealing with VS Code and Visual Studio's run and debugger shortcuts. These assume that you have the the "Run" and "Run w/ Debug" shortcuts rebound **in your IDE** such that "Run" is F5, and "Run w/ Debug" is CTRL+5. This is a preference of mine, so switch them in the firmware if you prefer it the other way around.
 
 ```
        ┌───┬───┬───┬───┐
@@ -62,22 +79,7 @@ In row column order:
 3) A whole lot of nothing
 4) (Mostly VS Code) Open File Explorer Sidepane, Open search Sidepane, open Debug Sidepane, Hide Sidepanes
 
-## Layer 3 - Numpad
 
-Its a num pad, congratulations TKL users! That said, the function keys are in weird spots since we dont have the normal keys.
-
-```
-       ┌───┬───┬───┬───┐
-       │ 7 │ 8 │ 9 │SUB│
-       ├───┼───┼───┼───┤
-       │ 4 │ 5 │ 6 │MUL│
-       ├───┼───┼───┼───┤
-       │ 1 │ 2 │ 3 │DIV│
-       ├───┼───┼───┼───┤
-       │ADD│ 0 │ . │ENT│
-       └───┴───┴───┴───┘
-
-```
 
 ## Layer 4 - Sleep + Power
 
@@ -117,14 +119,16 @@ There is also a nice little easter egg to let you know when its going to sleep. 
 While asleep, the keymatrix is still "on" and can be woken up using any interaction (knob turn, keypress), however the action tied to that interation **will not execute** on first press. This means that you would need one tap to wake the pad up and then one tap on the key you want to use. This is done so that you know what layer you are on when you wake up the pad and don't accidentally hit the computer sleep macro or something because you didn have the layer's backlighting on.
 
 ## Mouse Jiggler
-The mouse jiggler is mostly intended to keep your machine from going to sleep, without needing to use something like "Awake" which I always forget to turn off. It does three things: 
-1) it will move your mouse in a little square 
-2) it will tap the ALT and CTRL keys
-3) it will flash the keypad backlighting in a two frame pattern while this macro is active so you always know when its on
+The mouse jiggler is mostly intended to keep your machine from going to sleep, without needing to use something like "Awake" or "Caffine", which I always forget to turn off. It does three things: 
+1) it will move your mouse around 
+2) it will tap the CTRL keys
+3) it will flash the keypad backlighting to indicate its on
 
-This means that the host computer is getting two kinds of inputs, which should cover all your bases.
+This means that the host computer is getting two kinds of inputs (keys and mouse movement), which should cover all your bases.
 
-To break out of the macro, tap any key (similar to waking from sleep).
+To break out of the macro, tap any key (similar to waking from sleep). You may want to tap the jiggler key to make sure you dont accidentally trigger something else
+
+There is also a limit imposed on how far the random wandering can stray from the starting point. You can increase or decrease this limit by changing the constant MAX_JIGGLE_DISTANCE, or disable this entirely by commenting out the call to `elastic_bias`.
 
 ## Driver Tweaks
 
@@ -174,4 +178,4 @@ I also enabled the OLED fade out, though this has a pretty minimal effect in pra
 Aside: Im not really sure if this is the "best practice" for changing these settings, but just changing defines in the keymap files didnt seem to have any effect. Note that changes in these driver files will require a much longer+deeper rebuild next time you compile.
 
 #### 3) Turning down the logo timout
-The logo doesnt need to be shown for nearly as long as it is shown stock, so I turned that down to 2 (2000 ms) seconds in `kb16.c` at the root of this repo.
+The logo doesnt need to be shown for nearly as long as it is shown in the stock firmware, so I turned that down to 2 (2000 ms) seconds in `kb16.c` at the root of this repo.
