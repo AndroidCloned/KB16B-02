@@ -4,6 +4,10 @@ SRC += ./lib/logo.c
 # Platform
 PLATFORM = STM32
 
+# MCU Configuration for APM32F103CBT6 (STM32F103 clone)
+MCU = STM32F103
+BOOTLOADER = stm32duino
+
 # Configure for 128K flash
 MCU_LDSCRIPT = STM32F103xB
 
