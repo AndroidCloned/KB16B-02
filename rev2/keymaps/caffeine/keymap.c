@@ -230,8 +230,12 @@ enum custom_keycodes {
     M_QMK_RESET,            // Activate QMK Bootloader
     
     // Artisan Coffee Roaster - Kaleido M2s Heater Control
-    M_HEATER_INC,           // Increment heater power by 1%
-    M_HEATER_DEC,           // Decrement heater power by 1%
+    M_HEATER_INC,           // Increment heater power
+    M_HEATER_DEC,           // Decrement heater power
+    M_HEATER_RESET,         // Reset heater to 0%
+    M_HEATER_25,            // Set heater to 25%
+    M_HEATER_50,            // Set heater to 50%
+    M_HEATER_75,            // Set heater to 75%
 };
 
 // *****************************************************
@@ -737,36 +741,48 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case M_HEATER_INC:
             if (record->event.pressed) {
-                if (artisan_heater_value < 100) {
-                    artisan_heater_value++;
-                    // Send Artisan keyboard shortcut: 'r' + two-digit value
-                    // 'r' controls slider 4 (heater power) in Artisan
-                    tap_code(KC_R);
-                    if (artisan_heater_value < 10) {
-                        tap_code(KC_0);
-                        tap_code(KC_0 + artisan_heater_value);
-                    } else {
-                        tap_code(KC_0 + (artisan_heater_value / 10));  // Tens digit
-                        tap_code(KC_0 + (artisan_heater_value % 10));  // Ones digit
-                    }
-                }
+                // Method 1: Use TAB navigation + UP arrow (most reliable)
+                // This navigates to heater slider and increments by small amounts
+                tap_code(KC_TAB);  // Cycle to next slider
+                tap_code(KC_TAB);  // Continue cycling
+                tap_code(KC_TAB);  // Should reach heater slider (4th slider)
+                tap_code(KC_UP);   // Increment heater power
+                
+                // Alternative Method 2: Direct keyboard shortcut (uncomment if preferred)
+                // if (artisan_heater_value < 100) {
+                //     artisan_heater_value++;
+                //     tap_code(KC_R);
+                //     if (artisan_heater_value < 10) {
+                //         tap_code(KC_0);
+                //         tap_code(KC_0 + artisan_heater_value);
+                //     } else {
+                //         tap_code(KC_0 + (artisan_heater_value / 10));
+                //         tap_code(KC_0 + (artisan_heater_value % 10));
+                //     }
+                // }
             }
             break;
         case M_HEATER_DEC:
             if (record->event.pressed) {
-                if (artisan_heater_value > 0) {
-                    artisan_heater_value--;
-                    // Send Artisan keyboard shortcut: 'r' + two-digit value
-                    // 'r' controls slider 4 (heater power) in Artisan
-                    tap_code(KC_R);
-                    if (artisan_heater_value < 10) {
-                        tap_code(KC_0);
-                        tap_code(KC_0 + artisan_heater_value);
-                    } else {
-                        tap_code(KC_0 + (artisan_heater_value / 10));  // Tens digit
-                        tap_code(KC_0 + (artisan_heater_value % 10));  // Ones digit
-                    }
-                }
+                // Method 1: Use TAB navigation + DOWN arrow (most reliable)
+                // This navigates to heater slider and decrements by small amounts
+                tap_code(KC_TAB);  // Cycle to next slider
+                tap_code(KC_TAB);  // Continue cycling
+                tap_code(KC_TAB);  // Should reach heater slider (4th slider)
+                tap_code(KC_DOWN); // Decrement heater power
+                
+                // Alternative Method 2: Direct keyboard shortcut (uncomment if preferred)
+                // if (artisan_heater_value > 0) {
+                //     artisan_heater_value--;
+                //     tap_code(KC_R);
+                //     if (artisan_heater_value < 10) {
+                //         tap_code(KC_0);
+                //         tap_code(KC_0 + artisan_heater_value);
+                //     } else {
+                //         tap_code(KC_0 + (artisan_heater_value / 10));
+                //         tap_code(KC_0 + (artisan_heater_value % 10));
+                //     }
+                // }
             }
             break;
     }

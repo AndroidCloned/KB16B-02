@@ -139,7 +139,7 @@ This firmware features a comprehensive coffee-themed aesthetic that complements 
 ## Layer Menu
 There is a coffee-themed layer selection menu that will be used in this firmware. The animations and menu system use coffee-inspired imagery and colors that create a cohesive experience throughout the device.
 
-You can find the image versions of all the menus + animations in the `frogimancer\images` directory.
+You can find the image versions of all the menus + animations in the `caffeine\images` directory.
 
 ## Oh So Eeepy Sleepy
 This firmware comes equiped with a custom sleep mode that will activate if the pad is inactive for 30 minutes OR the user puts it into sleep using the sleep macro (see layer four). Any user interaction should keep the pad awake for another 30 minutes.
