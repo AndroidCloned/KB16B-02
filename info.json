@@ -1,12 +1,12 @@
 {
-    "keyboard_name": "KB16-01",
+    "keyboard_name": "KB16-02",
     "manufacturer": "DOIO",
     "url": "",
-    "maintainer": "HorrorTroll",
+    "maintainer": "AndroidCloned",
     "usb": {
         "vid": "0xD010",
-        "pid": "0x1601",
-        "device_version": "0.0.2",
+        "pid": "0x1602",
+        "device_version": "0.0.3",
         "force_nkro": true
     },
     "rgb_matrix": {
