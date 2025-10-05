@@ -246,6 +246,7 @@ enum custom_keycodes {
     M_BLE_TEST_KEY,         // Send test key via BLE
     M_BLE_STATUS,           // Show BLE connection status
     M_BLE_TOGGLE_MODE,      // Toggle between USB and BLE modes (S1 button)
+    M_BLE_SCAN_SWITCHES,    // Scan for SW1/SW2 switch pins
 };
 
 // *****************************************************
@@ -864,6 +865,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     rgb_matrix_set_color_all(0, 0, 255);  // Blue for USB mode
                     #endif
                 }
+            }
+            break;
+        case M_BLE_SCAN_SWITCHES:
+            if (record->event.pressed) {
+                // Scan for SW1 and SW2 switch pins
+                ble_scan_switch_pins();
+                
+                // Visual feedback for switch detection
+                #ifdef RGB_MATRIX_ENABLE
+                if (ble_is_sw1_pressed() && ble_is_sw2_pressed()) {
+                    rgb_matrix_set_color_all(255, 255, 0);  // Yellow - both switches detected
+                } else if (ble_is_sw1_pressed()) {
+                    rgb_matrix_set_color_all(255, 0, 0);    // Red - SW1 detected
+                } else if (ble_is_sw2_pressed()) {
+                    rgb_matrix_set_color_all(0, 255, 0);    // Green - SW2 detected
+                } else {
+                    rgb_matrix_set_color_all(0, 0, 255);    // Blue - no switches detected
+                }
+                #endif
             }
             break;
     }

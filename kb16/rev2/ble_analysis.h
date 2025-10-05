@@ -31,11 +31,22 @@
  * - A5, A6, A8, A9, A10, A11, A12, A13, A14, A15
  * - B2, B14
  * 
+ * PHYSICAL SWITCHES IDENTIFIED:
+ * - SW1 (S1 button): Pin R (USB/BLE mode switch) - Need to identify actual pin
+ * - SW2: Pin B (function unknown - possibly reset or other function) - Need to identify actual pin
+ * 
+ * NOTE: B12 and B11 are already used (matrix col and I2C), so SW1/SW2 must use different pins
+ * 
  * LIKELY BLE PINS:
  * - A9, A10: Common UART TX/RX pins
  * - A5, A6: Alternative UART pins
  * - B2: Possible CTS/RTS or power control
  */
+
+// Physical Switch Pin Definitions (to be determined)
+// SW1 (S1 button): Pin R - USB/BLE mode switch
+// SW2: Pin B - function unknown
+// NOTE: Need to identify actual GPIO pins for SW1 and SW2
 
 // BLE Communication Protocol (to be reverse engineered)
 #define BLE_UART_TX_PIN A9
@@ -84,3 +95,9 @@ void ble_blink_status_led(uint16_t interval);
 // S1 button functionality
 void ble_toggle_mode(void);
 bool ble_is_ble_mode(void);
+
+// Switch pin detection
+void ble_init_switches(void);
+bool ble_is_sw1_pressed(void);
+bool ble_is_sw2_pressed(void);
+void ble_scan_switch_pins(void);

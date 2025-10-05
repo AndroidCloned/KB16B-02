@@ -14,6 +14,12 @@ static bool led2_blinking = false;
 static uint16_t led2_blink_timer = 0;
 static uint16_t led2_blink_interval = 500; // 500ms blink interval
 
+// Switch detection variables
+static bool sw1_detected = false;
+static bool sw2_detected = false;
+static pin_t sw1_pin = PIN_UNASSIGNED;
+static pin_t sw2_pin = PIN_UNASSIGNED;
+
 // UART configuration for MS50SFA BLE communication
 void ble_init(void) {
     if (ble_initialized) return;
@@ -257,4 +263,67 @@ void ble_toggle_mode(void) {
 
 bool ble_is_ble_mode(void) {
     return ble_mode_active;
+}
+
+// Switch detection functions
+void ble_init_switches(void) {
+    // Initialize switch detection
+    // This function will scan available pins to find SW1 and SW2
+    
+    // Available pins for switches (excluding matrix, I2C, encoders, RGB):
+    // A5, A6, A8, A9, A10, A11, A12, A13, A14, A15, B2, B14
+    
+    sw1_detected = false;
+    sw2_detected = false;
+    sw1_pin = PIN_UNASSIGNED;
+    sw2_pin = PIN_UNASSIGNED;
+}
+
+bool ble_is_sw1_pressed(void) {
+    if (!sw1_detected || sw1_pin == PIN_UNASSIGNED) {
+        return false;
+    }
+    
+    // Read SW1 pin state
+    setPinInput(sw1_pin);
+    return !readPin(sw1_pin); // Assuming active low
+}
+
+bool ble_is_sw2_pressed(void) {
+    if (!sw2_detected || sw2_pin == PIN_UNASSIGNED) {
+        return false;
+    }
+    
+    // Read SW2 pin state
+    setPinInput(sw2_pin);
+    return !readPin(sw2_pin); // Assuming active low
+}
+
+void ble_scan_switch_pins(void) {
+    // Scan available pins to detect switches
+    // This is a debugging function to help identify the actual switch pins
+    
+    pin_t test_pins[] = {A5, A6, A8, A9, A10, A11, A12, A13, A14, A15, B2, B14};
+    uint8_t num_pins = sizeof(test_pins) / sizeof(pin_t);
+    
+    for (uint8_t i = 0; i < num_pins; i++) {
+        setPinInput(test_pins[i]);
+        
+        // Check if pin changes state (indicates a switch)
+        bool initial_state = readPin(test_pins[i]);
+        wait_ms(10);
+        bool current_state = readPin(test_pins[i]);
+        
+        if (initial_state != current_state) {
+            // This pin might be a switch
+            if (!sw1_detected) {
+                sw1_pin = test_pins[i];
+                sw1_detected = true;
+            } else if (!sw2_detected) {
+                sw2_pin = test_pins[i];
+                sw2_detected = true;
+                break; // Found both switches
+            }
+        }
+    }
 }
