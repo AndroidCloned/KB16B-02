@@ -36,9 +36,9 @@ RGB_MATRIX_DRIVER = WS2812
 ENCODER_ENABLE = yes
 ENCODER_MAP_ENABLE = no
 
-# Wireless/Bluetooth support
+# Wireless/Bluetooth support (Custom implementation)
 BLUETOOTH_ENABLE = yes
-BLUETOOTH_DRIVER = RN42
+BLUETOOTH_DRIVER = custom
 
 # VIA support
 VIA_ENABLE = yes
@@ -54,3 +54,4 @@ OPT_DEFS += -DCORTEX_ENABLE_WFI_IDLE=TRUE
 
 # Additional source files
 SRC += analog.c
+SRC += ble_implementation.c

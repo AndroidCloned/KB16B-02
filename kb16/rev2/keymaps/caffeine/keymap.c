@@ -23,6 +23,9 @@
 // OLED animation
 #include "../../../lib/layer_status/layer_status.h"
 
+// BLE implementation
+#include "../../ble_analysis.h"
+
 // Set shorter timout for OLED (default is 60 seconds!)
 // this has to be modified in the driver files, check it out here:
 // drivers/oled/oled_driver.h:300
@@ -236,6 +239,12 @@ enum custom_keycodes {
     M_HEATER_25,            // Set heater to 25%
     M_HEATER_50,            // Set heater to 50%
     M_HEATER_75,            // Set heater to 75%
+    
+    // BLE Debugging Functions
+    M_BLE_INIT,             // Initialize MS50SFA BLE module
+    M_BLE_PAIR,             // Enter BLE pairing mode
+    M_BLE_TEST_KEY,         // Send test key via BLE
+    M_BLE_STATUS,           // Show BLE connection status
 };
 
 // *****************************************************
@@ -783,6 +792,56 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 //         tap_code(KC_0 + (artisan_heater_value % 10));
                 //     }
                 // }
+            }
+            break;
+            
+        // BLE Debugging Functions
+        case M_BLE_INIT:
+            if (record->event.pressed) {
+                // Initialize MS50SFA BLE module
+                ble_init();
+                #ifdef RGB_MATRIX_ENABLE
+                rgb_matrix_set_color_all(0, 0, 255);  // Blue for BLE init
+                #endif
+            }
+            break;
+        case M_BLE_PAIR:
+            if (record->event.pressed) {
+                // Enter BLE pairing mode
+                ble_enter_pairing_mode();
+            }
+            break;
+        case M_BLE_TEST_KEY:
+            if (record->event.pressed) {
+                // Send test key 'A' via BLE
+                ble_send_key(KC_A, true);
+                wait_ms(50);
+                ble_send_key(KC_A, false);
+            }
+            break;
+        case M_BLE_STATUS:
+            if (record->event.pressed) {
+                // Show BLE connection status via RGB
+                ble_state_t state = ble_get_state();
+                #ifdef RGB_MATRIX_ENABLE
+                switch (state) {
+                    case BLE_STATE_DISCONNECTED:
+                        rgb_matrix_set_color_all(255, 0, 0);  // Red
+                        break;
+                    case BLE_STATE_CONNECTED:
+                        rgb_matrix_set_color_all(0, 255, 0);  // Green
+                        break;
+                    case BLE_STATE_PAIRING:
+                        rgb_matrix_set_color_all(255, 255, 0);  // Yellow
+                        break;
+                    case BLE_STATE_SLEEPING:
+                        rgb_matrix_set_color_all(128, 128, 128);  // Gray
+                        break;
+                    default:
+                        rgb_matrix_set_color_all(255, 0, 255);  // Magenta
+                        break;
+                }
+                #endif
             }
             break;
     }
