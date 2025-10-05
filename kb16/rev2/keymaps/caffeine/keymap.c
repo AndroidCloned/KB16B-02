@@ -823,7 +823,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                 M_DESK_LEFT,     M_WIN_1,    M_WIN_4,    M_WIN_7,     TO(_1),
                 M_LAUNCHER,     M_WIN_2,    M_WIN_5,    M_WIN_8,     _______,
                 M_DESK_RIGHT,     M_WIN_3,    M_WIN_6,   M_WIN_9,   M_WIN_D,
-                M_TEXT_EXTRACT, M_COLOR_PICKER, M_ALWAYS_TOP, M_LOOK_BUSY
+                M_TEXT_EXTRACT, M_COLOR_PICKER, M_ALWAYS_TOP, QK_BOOT
             ),
 
 /* LAYER 2 - Numpad
