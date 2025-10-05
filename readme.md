@@ -1,8 +1,8 @@
-# Frogimancer Firmware Overview
+# Caffeine Coffee Roaster Firmware Overview
 
-This firmware for the Doio 16 Key + 3 Knob Macro Pad (Megalodon), is designed around adding some nice navigation features that are useful for day to day Windows use + development work. It was designed with the idea of rotating the pad 90 degrees to have the knobs on the top so that the pad can be used as a num pad if desired, but with the knobs in a more reasonable place.
+This firmware for the Doio 16 Key + 3 Knob Macro Pad (Megalodon), is designed around adding some nice navigation features that are useful for day to day Windows use + development work, with a special focus on coffee roasting control. It was designed with the idea of rotating the pad 90 degrees to have the knobs on the top so that the pad can be used as a num pad if desired, but with the knobs in a more reasonable place.
 
-It also replaces the default menu + splash screen with something more fun. The menu uses a more "Pikmin" like aesthetic, because why waste the tiny screen just showing boring numbers?
+The firmware features a **coffee-themed aesthetic** with warm browns, creams, and coffee-inspired colors throughout all layers. The menu and animations use a coffee/caffeine theme that perfectly complements the Artisan Coffee Roaster integration.
 
 Follow the normal installation procedure for any other keyboard using QMK (install QMK MSYS + QMK Tool kit for Windows). There are some other tweaks that were made to the base board config/drivers (deeper in the QMK install directory than this repo goes) that were made to change the screen brightness + timeout. Those are discussed in the "Special Considerations" section.
 
@@ -21,7 +21,7 @@ The function of the knobs varies by layer:
   - **Layer 3**: Alt Tab Scrolling (same as Layer 1)
   - **Layer 4**: Alt Tab Scrolling (same as Layer 1)
 
-I tried to put some helpful colorful backlighting on most things to give a quick idea of where things are. That said, it is mostly optimized for my light green + magenta color scheme, so you may want to tweak the DEFAULT_\<COLORNAME\> structs if you want to quickly change these.
+I tried to put some helpful colorful backlighting on most things to give a quick idea of where things are. The firmware uses a **coffee-themed color palette** with warm browns, creams, and coffee-inspired colors that create a cohesive aesthetic perfect for coffee roasting sessions. You may want to tweak the coffee color constants if you want to adjust the theme.
 
 ## Layer 1 - Windows Fast Navigation
 The first layer is focused on letting the user quickly navigate around in Windows and access some utilities through (PowerToys)[https://learn.microsoft.com/en-us/windows/powertoys/]. Of course, you need PowerToys installed for some of these features to work.
@@ -117,8 +117,27 @@ CSL - This uses the windows sleep keystrokes to put the host machine to sleep an
 
 # Special Considerations
 
+## Coffee Theme
+This firmware features a comprehensive coffee-themed aesthetic that complements the Artisan Coffee Roaster integration:
+
+### Color Palette:
+- **Coffee Bean**: Dark coffee bean brown (`#4A2C1A`)
+- **Cream**: Light cream color (`#F5F0E6`) 
+- **Espresso**: Dark espresso (`#2F1B14`)
+- **Caramel**: Warm caramel (`#D2691E`)
+- **Mocha**: Rich mocha brown (`#8B4513`)
+- **Heater On**: Hot orange for active heater (`#FF4400`)
+- **Heater Off**: Grey for inactive heater (`#666666`)
+- **Steam**: Light steam blue (`#E6E6FA`)
+
+### Layer-Specific Themes:
+- **Layer 1**: Cream and caramel tones for general navigation
+- **Layer 2**: Coffee bean and cream for numpad + roaster control
+- **Layer 3**: Steam blue and heater orange for development tools
+- **Layer 4**: Espresso and mocha for power management
+
 ## Layer Menu
-There is a lily pad themed layer selection menu that will be used in this firmware. The old default firmware animation frames are still available in the `layer_status.c` file if you want them back, although they aren't rotated 90 degrees to match everything else.
+There is a coffee-themed layer selection menu that will be used in this firmware. The animations and menu system use coffee-inspired imagery and colors that create a cohesive experience throughout the device.
 
 You can find the image versions of all the menus + animations in the `frogimancer\images` directory.
 
