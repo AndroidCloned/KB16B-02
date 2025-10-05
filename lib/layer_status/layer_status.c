@@ -670,3 +670,12 @@ void render_sleep_animation(void) {
         }
     }
 }
+
+void reset_animations(void) {
+    animation_frame_timer = timer_read();
+    curr_frame = 0;
+}
+
+void screen_off(void) {
+    oled_off();
+}

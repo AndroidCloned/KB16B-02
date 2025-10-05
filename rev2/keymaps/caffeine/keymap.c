@@ -21,7 +21,7 @@
 # include <stdlib.h>
 
 // OLED animation
-#include "lib/layer_status/layer_status.h"
+#include "../../lib/layer_status/layer_status.h"
 
 // Set shorter timout for OLED (default is 60 seconds!)
 // this has to be modified in the driver files, check it out here:
