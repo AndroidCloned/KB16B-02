@@ -12,10 +12,14 @@ Since this repo **does not fork the base QMK repo** please make sure that you us
 
 This firmware utilizes four layers/keymaps, selected by the bottom left knob (when in "numpad orientation"). Since the firmware makes an assumption on the orientation of the device that isn't really true once you rotate it, I suggest looking at the diagrams in this readme rather than what is in the source. Of course the actual keymap array in the source has the final say.
 
-The function of the knobs *does not change from layer to layer*, they are as follows:
+The function of the knobs varies by layer:
 * Bottom Left - Layer Selection: scroll through the four layers available. A click (press) goes back to layer 1.
 * Top Left - Ctrl Tab Scrolling: scroll through *tabs* of active program using "CTRL + TAB" wizardry. A click (press) does nothing.
-* Right (Big Knob) - Alt Tab Scrolling: scroll through *windows* as if pressing "ALT + TAB". A click (press) activatates the "WIN + D" shortcut to show the desktop.
+* Right (Big Knob) - Layer dependent:
+  - **Layer 1**: Alt Tab Scrolling: scroll through *windows* as if pressing "ALT + TAB". A click (press) activates the "WIN + D" shortcut to show the desktop.
+  - **Layer 2**: Artisan Coffee Roaster heater control (Kaleido M2s compatible). Clockwise increases heater power, counter-clockwise decreases.
+  - **Layer 3**: Alt Tab Scrolling (same as Layer 1)
+  - **Layer 4**: Alt Tab Scrolling (same as Layer 1)
 
 I tried to put some helpful colorful backlighting on most things to give a quick idea of where things are. That said, it is mostly optimized for my light green + magenta color scheme, so you may want to tweak the DEFAULT_\<COLORNAME\> structs if you want to quickly change these.
 
@@ -39,9 +43,16 @@ The "W\<NUMBER\>" macros emulate the "WIN + \<NUM\>" command, but hold down the 
 
 The right most column has several "utilities". The first is a custom mouse jiggler (which is a toggle and will flash the lights so you know its on), then below are the PowerToys applets for "Always On Top", "Color Picker", and "Text Extractor".
 
-## Layer 2 - Numpad
+## Layer 2 - Numpad + Artisan Coffee Roaster Control
 
 Its a num pad, congratulations TKL users! That said, the function keys are in weird spots since we dont have the normal key layout.
+
+**Special Feature**: The large top-middle knob controls Artisan Coffee Roaster heater power for Kaleido M2s roasters:
+- **Clockwise rotation**: Increases heater power by 1% (max 100%)
+- **Counter-clockwise rotation**: Decreases heater power by 1% (min 0%)
+- **Commands sent**: Proper Kaleido format `kaleido(HP,{value})` where {value} is the percentage
+
+This feature requires Artisan Coffee Roaster software with keyboard shortcuts enabled and a Kaleido M2s roaster connected.
 
 ```
        ┌───┬───┬───┬───┐
@@ -179,3 +190,33 @@ Aside: Im not really sure if this is the "best practice" for changing these sett
 
 #### 3) Turning down the logo timout
 The logo doesnt need to be shown for nearly as long as it is shown in the stock firmware, so I turned that down to 2 (2000 ms) seconds in `kb16.c` at the root of this repo.
+
+# Artisan Coffee Roaster Integration
+
+This firmware includes specialized support for controlling Kaleido M2s coffee roasters through Artisan Coffee Roaster software.
+
+## Setup Requirements
+
+1. **Artisan Coffee Roaster** software installed and running
+2. **Kaleido M2s** roaster connected and configured in Artisan
+3. **Keyboard shortcuts enabled** in Artisan settings
+4. **Rev2 hardware** (this firmware is designed specifically for Rev2)
+
+## Usage
+
+1. Switch to **Layer 2** on the macropad
+2. Rotate the **large top-middle knob** to control heater power:
+   - Clockwise: Increase heater power by 1%
+   - Counter-clockwise: Decrease heater power by 1%
+3. The macropad sends proper Kaleido commands in the format `kaleido(HP,{value})`
+4. Heater power range: 0% to 100% with automatic bounds checking
+
+## Technical Details
+
+- **Default heater value**: 50%
+- **Command format**: Uses Kaleido's native command structure
+- **State tracking**: Maintains current heater value in firmware memory
+- **Layer-specific**: Only active on Layer 2 to avoid accidental activation
+- **Encoder mapping**: Uses Encoder 2 (pins A1/A2) - the large top-middle knob
+
+This integration allows precise, hands-free control of your Kaleido M2s roaster during coffee roasting sessions without needing to interact with the computer interface.
