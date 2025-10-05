@@ -8,6 +8,7 @@
 // - Green LED is from LED 2 on PCB (NOT from BLE module)
 // - PCB clearly labeled "BLE"
 // - Module is surface-mounted with gold pads for connections
+// - S1 BUTTON: Switches between USB and BLE modes
 // - BLE module status unknown (no visible LED on module itself)
 
 /*
@@ -79,3 +80,7 @@ ble_state_t ble_get_state(void);
 // PCB LED 2 control for BLE status indication
 void ble_set_status_led(bool on);
 void ble_blink_status_led(uint16_t interval);
+
+// S1 button functionality
+void ble_toggle_mode(void);
+bool ble_is_ble_mode(void);

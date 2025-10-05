@@ -6,6 +6,7 @@
 // BLE state management
 static ble_state_t ble_current_state = BLE_STATE_DISCONNECTED;
 static bool ble_initialized = false;
+static bool ble_mode_active = false; // true = BLE mode, false = USB mode
 
 // PCB LED 2 control for BLE status indication
 // LED 2 is the green LED visible on the PCB (not on BLE module)
@@ -210,4 +211,50 @@ void ble_update_status_led(void) {
         // Toggle LED 2 state
         // writePin(LED2_PIN, !readPin(LED2_PIN));
     }
+}
+
+// S1 button functionality - switches between USB and BLE modes
+void ble_toggle_mode(void) {
+    ble_mode_active = !ble_mode_active;
+    
+    if (ble_mode_active) {
+        // Switch to BLE mode
+        // Disable USB HID, enable BLE communication
+        // This is where we need to implement the mode switching logic
+        
+        #ifdef RGB_MATRIX_ENABLE
+        rgb_matrix_set_color_all(0, 255, 0);  // Green for BLE mode
+        #endif
+        
+        // LED 2 solid on for BLE mode
+        ble_set_status_led(true);
+        
+        // Initialize BLE if not already done
+        if (!ble_initialized) {
+            ble_init();
+        }
+        
+        // Enter BLE mode (pairing if not connected)
+        if (ble_current_state == BLE_STATE_DISCONNECTED) {
+            ble_enter_pairing_mode();
+        }
+        
+    } else {
+        // Switch to USB mode
+        // Disable BLE, enable USB HID
+        
+        #ifdef RGB_MATRIX_ENABLE
+        rgb_matrix_set_color_all(0, 0, 255);  // Blue for USB mode
+        #endif
+        
+        // LED 2 off for USB mode
+        ble_set_status_led(false);
+        
+        // Put BLE module to sleep to save power
+        ble_sleep();
+    }
+}
+
+bool ble_is_ble_mode(void) {
+    return ble_mode_active;
 }

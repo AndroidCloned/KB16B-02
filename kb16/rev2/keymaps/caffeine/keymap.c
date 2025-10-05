@@ -245,6 +245,7 @@ enum custom_keycodes {
     M_BLE_PAIR,             // Enter BLE pairing mode
     M_BLE_TEST_KEY,         // Send test key via BLE
     M_BLE_STATUS,           // Show BLE connection status
+    M_BLE_TOGGLE_MODE,      // Toggle between USB and BLE modes (S1 button)
 };
 
 // *****************************************************
@@ -846,6 +847,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         break;
                 }
                 #endif
+            }
+            break;
+        case M_BLE_TOGGLE_MODE:
+            if (record->event.pressed) {
+                // Toggle between USB and BLE modes (simulates S1 button)
+                ble_toggle_mode();
+                
+                // Visual feedback for mode switch
+                if (ble_is_ble_mode()) {
+                    #ifdef RGB_MATRIX_ENABLE
+                    rgb_matrix_set_color_all(0, 255, 0);  // Green for BLE mode
+                    #endif
+                } else {
+                    #ifdef RGB_MATRIX_ENABLE
+                    rgb_matrix_set_color_all(0, 0, 255);  // Blue for USB mode
+                    #endif
+                }
             }
             break;
     }
