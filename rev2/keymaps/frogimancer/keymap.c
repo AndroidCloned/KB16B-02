@@ -739,12 +739,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 if (artisan_heater_value < 100) {
                     artisan_heater_value++;
-                    // Send Kaleido heater command: kaleido(HP,{value})
-                    SEND_STRING("kaleido(HP,");
+                    // Send Artisan keyboard shortcut: 'r' + two-digit value
+                    // 'r' controls slider 4 (heater power) in Artisan
+                    tap_code(KC_R);
                     if (artisan_heater_value < 10) {
-                        SEND_STRING("0");
+                        tap_code(KC_0);
+                        tap_code(KC_0 + artisan_heater_value);
+                    } else {
+                        tap_code(KC_0 + (artisan_heater_value / 10));  // Tens digit
+                        tap_code(KC_0 + (artisan_heater_value % 10));  // Ones digit
                     }
-                    SEND_STRING(")");
                 }
             }
             break;
@@ -752,12 +756,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 if (artisan_heater_value > 0) {
                     artisan_heater_value--;
-                    // Send Kaleido heater command: kaleido(HP,{value})
-                    SEND_STRING("kaleido(HP,");
+                    // Send Artisan keyboard shortcut: 'r' + two-digit value
+                    // 'r' controls slider 4 (heater power) in Artisan
+                    tap_code(KC_R);
                     if (artisan_heater_value < 10) {
-                        SEND_STRING("0");
+                        tap_code(KC_0);
+                        tap_code(KC_0 + artisan_heater_value);
+                    } else {
+                        tap_code(KC_0 + (artisan_heater_value / 10));  // Tens digit
+                        tap_code(KC_0 + (artisan_heater_value % 10));  // Ones digit
                     }
-                    SEND_STRING(")");
                 }
             }
             break;

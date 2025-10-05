@@ -227,13 +227,13 @@ This firmware includes specialized support for controlling Kaleido M2s coffee ro
 2. Rotate the **large top-middle knob** to control heater power:
    - Clockwise: Increase heater power by 1%
    - Counter-clockwise: Decrease heater power by 1%
-3. The macropad sends proper Kaleido commands in the format `kaleido(HP,{value})`
+3. The macropad sends Artisan keyboard shortcuts: `r` + two-digit value (e.g., `r75` for 75%)
 4. Heater power range: 0% to 100% with automatic bounds checking
 
 ## Technical Details
 
 - **Default heater value**: 50%
-- **Command format**: Uses Kaleido's native command structure
+- **Command format**: Uses Artisan's keyboard shortcuts (`r` + two-digit value)
 - **State tracking**: Maintains current heater value in firmware memory
 - **Layer-specific**: Only active on Layer 2 to avoid accidental activation
 - **Encoder mapping**: Uses Encoder 2 (pins A1/A2) - the large top-middle knob
