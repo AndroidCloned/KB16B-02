@@ -800,6 +800,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 // Initialize MS50SFA BLE module
                 ble_init();
+                // Use PCB LED 2 for BLE status indication
+                ble_blink_status_led(200); // Fast blink during init
                 #ifdef RGB_MATRIX_ENABLE
                 rgb_matrix_set_color_all(0, 0, 255);  // Blue for BLE init
                 #endif
@@ -809,6 +811,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 // Enter BLE pairing mode
                 ble_enter_pairing_mode();
+                // LED 2 slow blink for pairing mode
+                ble_blink_status_led(1000); // 1 second blink for pairing
             }
             break;
         case M_BLE_TEST_KEY:

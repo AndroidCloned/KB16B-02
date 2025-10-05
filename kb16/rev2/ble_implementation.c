@@ -7,12 +7,18 @@
 static ble_state_t ble_current_state = BLE_STATE_DISCONNECTED;
 static bool ble_initialized = false;
 
+// PCB LED 2 control for BLE status indication
+// LED 2 is the green LED visible on the PCB (not on BLE module)
+static bool led2_blinking = false;
+static uint16_t led2_blink_timer = 0;
+static uint16_t led2_blink_interval = 500; // 500ms blink interval
+
 // UART configuration for MS50SFA BLE communication
 void ble_init(void) {
     if (ble_initialized) return;
     
     // Initialize UART for MS50SFA BLE module communication
-    // MS50SFA module has active green LED indicating power/activity
+    // Note: Green LED is from PCB LED 2, not the BLE module itself
     
     // Set up GPIO pins for BLE
     setPinOutput(BLE_POWER_PIN);
@@ -173,5 +179,35 @@ void ble_process_response(uint8_t* data, uint8_t len) {
             
         default:
             break;
+    }
+}
+
+// PCB LED 2 control functions for BLE status indication
+void ble_set_status_led(bool on) {
+    // Control PCB LED 2 (the green LED visible on the PCB)
+    // This LED is likely controlled by the MCU, not the BLE module
+    // We need to determine which GPIO pin controls LED 2
+    
+    // Placeholder - need to identify actual LED 2 pin
+    // setPinOutput(LED2_PIN);
+    // writePin(LED2_PIN, on ? 1 : 0);
+    
+    led2_blinking = false; // Stop blinking when manually setting LED
+}
+
+void ble_blink_status_led(uint16_t interval) {
+    led2_blink_interval = interval;
+    led2_blink_timer = timer_read();
+    led2_blinking = true;
+}
+
+// Function to update LED 2 blinking (call from main loop or timer)
+void ble_update_status_led(void) {
+    if (!led2_blinking) return;
+    
+    if (timer_elapsed(led2_blink_timer) >= led2_blink_interval) {
+        led2_blink_timer = timer_read();
+        // Toggle LED 2 state
+        // writePin(LED2_PIN, !readPin(LED2_PIN));
     }
 }

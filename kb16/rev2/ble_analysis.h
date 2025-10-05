@@ -5,9 +5,10 @@
 // 
 // HARDWARE IDENTIFIED:
 // - BLE Module: MS50SFA (FCC ID: 2ABUS-MS50SFA)
-// - Module has active green LED (power/activity indicator)
+// - Green LED is from LED 2 on PCB (NOT from BLE module)
 // - PCB clearly labeled "BLE"
 // - Module is surface-mounted with gold pads for connections
+// - BLE module status unknown (no visible LED on module itself)
 
 /*
  * HARDWARE ANALYSIS:
@@ -74,3 +75,7 @@ void ble_sleep(void);
 void ble_wake(void);
 bool ble_is_connected(void);
 ble_state_t ble_get_state(void);
+
+// PCB LED 2 control for BLE status indication
+void ble_set_status_led(bool on);
+void ble_blink_status_led(uint16_t interval);
