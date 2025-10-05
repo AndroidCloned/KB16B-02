@@ -167,6 +167,9 @@ uint8_t right_stretch = 0;
 uint8_t up_stretch = 0;
 uint8_t down_stretch = 0;
 
+// Artisan Coffee Roaster - Kaleido M2s Heater Control
+uint8_t artisan_heater_value = 50;  // Default heater value (50%)
+
 // *****************************************************
 // Declarations bc order dumbness
 // *****************************************************
@@ -224,6 +227,10 @@ enum custom_keycodes {
     M_SLEEP_PAD,            // Put macropad into sleep mode
     M_SLEEP_ALL,            // Put computer to sleep, then sleep self
     M_QMK_RESET,            // Activate QMK Bootloader
+    
+    // Artisan Coffee Roaster - Kaleido M2s Heater Control
+    M_HEATER_INC,           // Increment heater power by 1%
+    M_HEATER_DEC,           // Decrement heater power by 1%
 };
 
 // *****************************************************
@@ -727,6 +734,32 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 defer_exec(100, reset_callback, NULL);
             }
             break;
+        case M_HEATER_INC:
+            if (record->event.pressed) {
+                if (artisan_heater_value < 100) {
+                    artisan_heater_value++;
+                    // Send Kaleido heater command: kaleido(HP,{value})
+                    SEND_STRING("kaleido(HP,");
+                    if (artisan_heater_value < 10) {
+                        SEND_STRING("0");
+                    }
+                    SEND_STRING(")");
+                }
+            }
+            break;
+        case M_HEATER_DEC:
+            if (record->event.pressed) {
+                if (artisan_heater_value > 0) {
+                    artisan_heater_value--;
+                    // Send Kaleido heater command: kaleido(HP,{value})
+                    SEND_STRING("kaleido(HP,");
+                    if (artisan_heater_value < 10) {
+                        SEND_STRING("0");
+                    }
+                    SEND_STRING(")");
+                }
+            }
+            break;
     }
     return true;
 }
@@ -1000,7 +1033,7 @@ bool rgb_matrix_indicators_user(void) {
 #ifdef ENCODER_MAP_ENABLE
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [_1] = { ENCODER_CCW_CW(TO(_4), TO(_2)), ENCODER_CCW_CW(M_CTRL_TAB_SCROLL_DOWN, M_CTRL_TAB_SCROLL_UP), ENCODER_CCW_CW(M_TAB_SCROLL_DOWN, M_TAB_SCROLL_UP) },
-    [_2] = { ENCODER_CCW_CW(TO(_1), TO(_3)), ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
+    [_2] = { ENCODER_CCW_CW(TO(_1), TO(_3)), ENCODER_CCW_CW(M_HEATER_DEC, M_HEATER_INC), ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
     [_3] = { ENCODER_CCW_CW(TO(_2), TO(_4)), ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
     [_4] = { ENCODER_CCW_CW(TO(_3), TO(_1)), ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
 };
