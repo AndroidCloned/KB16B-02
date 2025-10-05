@@ -1,6 +1,9 @@
 SRC += ./lib/layer_status/layer_status.c
 SRC += ./lib/logo.c
 
+# Platform
+PLATFORM = STM32
+
 # Configure for 128K flash
 MCU_LDSCRIPT = STM32F103xB
 
@@ -22,7 +25,7 @@ OLED_ENABLE = yes
 
 # RGB Matrix enabled
 RGB_MATRIX_ENABLE = yes
-RGB_MATRIX_DRIVER = WS2812
+RGB_MATRIX_DRIVER = ws2812
 
 # Encoder enabled
 ENCODER_ENABLE = yes
