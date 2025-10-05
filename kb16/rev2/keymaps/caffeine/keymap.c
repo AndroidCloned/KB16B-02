@@ -21,7 +21,7 @@
 # include <stdlib.h>
 
 // OLED animation
-#include "../../lib/layer_status/layer_status.h"
+#include "../../../lib/layer_status/layer_status.h"
 
 // Set shorter timout for OLED (default is 60 seconds!)
 // this has to be modified in the driver files, check it out here:
@@ -819,7 +819,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 */
     /*  Row:    0         1        2        3         4      */
-    [_1] = LAYOUT_16KEY(
+    [_1] = LAYOUT(
                 M_DESK_LEFT,     M_WIN_1,    M_WIN_4,    M_WIN_7,     TO(_1),
                 M_LAUNCHER,     M_WIN_2,    M_WIN_5,    M_WIN_8,     _______,
                 M_DESK_RIGHT,     M_WIN_3,    M_WIN_6,   M_WIN_9,   M_WIN_D,
@@ -839,7 +839,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        └───┴───┴───┴───┘
 */
     /*  Row:    0        1        2        3        4       */
-    [_2] = LAYOUT_16KEY(
+    [_2] = LAYOUT(
                 KC_KP_PLUS,     KC_KP_1,    KC_KP_4,    KC_KP_7,     TO(_1),
                 KC_KP_0,     KC_KP_2,    KC_KP_5,    KC_KP_8,     _______,
                 KC_KP_DOT,     KC_KP_3,    KC_KP_6,   KC_KP_9,   M_WIN_D,
@@ -860,7 +860,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 */
     /*  Row:    0         1        2        3         4      */
-    [_3] = LAYOUT_16KEY(
+    [_3] = LAYOUT(
                 M_EXPLORER, _______, M_STEP_OVER, M_RUN, TO(_1),
                 M_SEARCH, _______, M_STEP_INTO, M_RUN_DEBUG, _______,
                 M_DEBUG_MENU, _______, M_STEP_OUT, M_RERUN_DEBUG, M_WIN_D,
@@ -881,7 +881,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        └───┴───┴───┴───┘
 */
     /*  Row:    0        1        2        3        4        */
-    [_4] = LAYOUT_16KEY(
+    [_4] = LAYOUT(
                 M_SLEEP_PAD, _______, _______, M_QMK_RESET, _______,
                 _______, _______, _______, _______, TO(_1),
                 _______, _______, _______, _______, _______,
