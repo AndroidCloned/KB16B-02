@@ -1,0 +1,20 @@
+/*
+ * Artisan Coffee Roaster Control - Keymap Layout Example
+ * 
+ * Example keymap layout for roaster control layer
+ * Adjust layout macro and key positions as needed for your keyboard
+ */
+
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+    // ... other layers ...
+    
+    // Layer 2: Basic Roaster Control
+    [_2] = LAYOUT(
+        M_HP_25,  M_HP_50,  M_HP_75,  M_HP_100,
+        M_HP_INC, M_HP_DEC, M_AIR_INC, M_AIR_DEC,
+        M_DRUM_INC, M_DRUM_DEC, M_TEMP_INC, M_TEMP_DEC,
+        M_ROAST_START, M_ROAST_STOP, M_ROAST_EMERGENCY, M_ROAST_PROFILE
+    ),
+    
+    // ... other layers ...
+};

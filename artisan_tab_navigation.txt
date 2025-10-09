@@ -1,0 +1,48 @@
+/*
+ * Artisan Coffee Roaster Control - Alternative TAB Navigation Method
+ * 
+ * Use this implementation if direct H/A/D commands don't work with your Artisan setup
+ * Replace the corresponding cases in your process_record_user function
+ */
+
+        case M_HP_INC:
+            if (record->event.pressed) {
+                // Method: Use TAB navigation + UP arrow
+                tap_code(KC_TAB);  // Cycle to next slider
+                tap_code(KC_TAB);  // Continue cycling
+                tap_code(KC_TAB);  // Should reach heater slider (4th slider)
+                tap_code(KC_UP);   // Increment heater power
+            }
+            break;
+            
+        case M_HP_DEC:
+            if (record->event.pressed) {
+                // Method: Use TAB navigation + DOWN arrow
+                tap_code(KC_TAB);  // Cycle to next slider
+                tap_code(KC_TAB);  // Continue cycling
+                tap_code(KC_TAB);  // Should reach heater slider (4th slider)
+                tap_code(KC_DOWN); // Decrement heater power
+            }
+            break;
+            
+        case M_AIR_INC:
+            if (record->event.pressed) {
+                // Method: Use TAB navigation + UP arrow for air
+                tap_code(KC_TAB);  // Cycle to next slider
+                tap_code(KC_TAB);  // Continue cycling
+                tap_code(KC_TAB);  // Continue cycling
+                tap_code(KC_TAB);  // Should reach air slider
+                tap_code(KC_UP);   // Increment air
+            }
+            break;
+            
+        case M_AIR_DEC:
+            if (record->event.pressed) {
+                // Method: Use TAB navigation + DOWN arrow for air
+                tap_code(KC_TAB);  // Cycle to next slider
+                tap_code(KC_TAB);  // Continue cycling
+                tap_code(KC_TAB);  // Continue cycling
+                tap_code(KC_TAB);  // Should reach air slider
+                tap_code(KC_DOWN); // Decrement air
+            }
+            break;

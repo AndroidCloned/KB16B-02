@@ -1,0 +1,22 @@
+/*
+ * Artisan Coffee Roaster Control - Encoder Integration
+ * 
+ * Add these mappings to your encoder_map array
+ * Adjust layer numbers and encoder assignments as needed
+ */
+
+const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
+    // Example for Layer 2 (roaster control layer)
+    [_2] = { 
+        ENCODER_CCW_CW(TO(_1), TO(_3)),           // Layer navigation
+        ENCODER_CCW_CW(M_HP_DEC, M_HP_INC),       // Heater power control
+        ENCODER_CCW_CW(M_AIR_DEC, M_AIR_INC)      // Air control
+    },
+    
+    // Example for Layer 3 (advanced roaster control)
+    [_3] = { 
+        ENCODER_CCW_CW(TO(_2), TO(_4)),           // Layer navigation
+        ENCODER_CCW_CW(M_DRUM_DEC, M_DRUM_INC),  // Drum control
+        ENCODER_CCW_CW(M_TEMP_DEC, M_TEMP_INC)   // Temperature control
+    },
+};

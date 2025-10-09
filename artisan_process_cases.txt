@@ -1,0 +1,131 @@
+/*
+ * Artisan Coffee Roaster Control - Process Record User Cases
+ * 
+ * Add these cases to your process_record_user switch statement
+ * Place them within your existing switch statement
+ */
+
+        // Heater Power Control
+        case M_HP_INC:
+            if (record->event.pressed) {
+                if (artisan_heater_value < 100) {
+                    artisan_heater_value += 5;  // Increment by 5%
+                    send_hp_command(artisan_heater_value);
+                }
+            }
+            break;
+            
+        case M_HP_DEC:
+            if (record->event.pressed) {
+                if (artisan_heater_value > 0) {
+                    artisan_heater_value -= 5;  // Decrement by 5%
+                    send_hp_command(artisan_heater_value);
+                }
+            }
+            break;
+            
+        case M_HP_25:
+            if (record->event.pressed) {
+                artisan_heater_value = 25;
+                send_hp_command(artisan_heater_value);
+            }
+            break;
+            
+        case M_HP_50:
+            if (record->event.pressed) {
+                artisan_heater_value = 50;
+                send_hp_command(artisan_heater_value);
+            }
+            break;
+            
+        case M_HP_75:
+            if (record->event.pressed) {
+                artisan_heater_value = 75;
+                send_hp_command(artisan_heater_value);
+            }
+            break;
+            
+        case M_HP_100:
+            if (record->event.pressed) {
+                artisan_heater_value = 100;
+                send_hp_command(artisan_heater_value);
+            }
+            break;
+            
+        // Air Control
+        case M_AIR_INC:
+            if (record->event.pressed) {
+                if (artisan_air_value < 100) {
+                    artisan_air_value += 5;  // Increment by 5%
+                    send_air_command(artisan_air_value);
+                }
+            }
+            break;
+            
+        case M_AIR_DEC:
+            if (record->event.pressed) {
+                if (artisan_air_value > 0) {
+                    artisan_air_value -= 5;  // Decrement by 5%
+                    send_air_command(artisan_air_value);
+                }
+            }
+            break;
+            
+        // Drum Control
+        case M_DRUM_INC:
+            if (record->event.pressed) {
+                if (artisan_drum_value < 100) {
+                    artisan_drum_value += 5;  // Increment by 5%
+                    send_drum_command(artisan_drum_value);
+                }
+            }
+            break;
+            
+        case M_DRUM_DEC:
+            if (record->event.pressed) {
+                if (artisan_drum_value > 0) {
+                    artisan_drum_value -= 5;  // Decrement by 5%
+                    send_drum_command(artisan_drum_value);
+                }
+            }
+            break;
+            
+        // Temperature Control
+        case M_TEMP_INC:
+            if (record->event.pressed) {
+                tap_code(KC_T);  // Temperature command
+                tap_code(KC_UP); // Increment
+            }
+            break;
+            
+        case M_TEMP_DEC:
+            if (record->event.pressed) {
+                tap_code(KC_T);  // Temperature command
+                tap_code(KC_DOWN); // Decrement
+            }
+            break;
+            
+        // Roast Control
+        case M_ROAST_START:
+            if (record->event.pressed) {
+                tap_code(KC_S);  // Start command
+            }
+            break;
+            
+        case M_ROAST_STOP:
+            if (record->event.pressed) {
+                tap_code(KC_S);  // Stop command (same as start, toggles)
+            }
+            break;
+            
+        case M_ROAST_EMERGENCY:
+            if (record->event.pressed) {
+                tap_code(KC_E);  // Emergency stop
+            }
+            break;
+            
+        case M_ROAST_PROFILE:
+            if (record->event.pressed) {
+                tap_code(KC_P);  // Profile command
+            }
+            break;

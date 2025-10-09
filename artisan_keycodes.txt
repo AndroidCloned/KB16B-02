@@ -1,0 +1,24 @@
+/*
+ * Artisan Coffee Roaster Control Keycodes
+ * 
+ * Add these keycodes to your enum custom_keycodes in keymap.c
+ * Place them after SAFE_RANGE or at the end of your existing enum
+ */
+
+    // Artisan Coffee Roaster Control
+    M_HP_INC,               // Increment heater power by 5%
+    M_HP_DEC,               // Decrement heater power by 5%
+    M_HP_25,                // Set heater power to 25%
+    M_HP_50,                // Set heater power to 50%
+    M_HP_75,                // Set heater power to 75%
+    M_HP_100,               // Set heater power to 100%
+    M_AIR_INC,              // Increment air by 5%
+    M_AIR_DEC,              // Decrement air by 5%
+    M_DRUM_INC,             // Increment drum by 5%
+    M_DRUM_DEC,             // Decrement drum by 5%
+    M_TEMP_INC,             // Increment temperature setpoint
+    M_TEMP_DEC,             // Decrement temperature setpoint
+    M_ROAST_START,          // Start roasting
+    M_ROAST_STOP,           // Stop roasting
+    M_ROAST_EMERGENCY,      // Emergency stop
+    M_ROAST_PROFILE,        // Load roast profile

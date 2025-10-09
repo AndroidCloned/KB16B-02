@@ -1,0 +1,27 @@
+/*
+ * Artisan Coffee Roaster Control - RGB Lighting Integration (Optional)
+ * 
+ * Add this function to provide visual feedback for roaster state
+ * Call this function from your layer change or key press handlers
+ */
+
+void update_roaster_rgb(void) {
+    // Color code based on heater power level
+    if (artisan_heater_value >= 75) {
+        rgb_matrix_set_color_all(255, 0, 0);    // Red for high heat
+    } else if (artisan_heater_value >= 50) {
+        rgb_matrix_set_color_all(255, 165, 0);  // Orange for medium heat
+    } else if (artisan_heater_value >= 25) {
+        rgb_matrix_set_color_all(255, 255, 0);  // Yellow for low heat
+    } else {
+        rgb_matrix_set_color_all(0, 255, 0);    // Green for minimal heat
+    }
+}
+
+// Example usage in layer change handler:
+void layer_state_set_user(layer_state_t state) {
+    if (IS_LAYER_ON_STATE(state, _2)) {  // If roaster control layer is active
+        update_roaster_rgb();
+    }
+    return state;
+}

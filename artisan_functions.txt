@@ -1,0 +1,60 @@
+/*
+ * Artisan Coffee Roaster Control Functions
+ * 
+ * Add these global variables and functions to your keymap.c file
+ * Place global variables near the top of your file
+ * Place functions before process_record_user
+ */
+
+// Global variables for tracking roaster state
+uint8_t artisan_heater_value = 50;  // Default heater value (50%)
+uint8_t artisan_air_value = 50;     // Default air value (50%)
+uint8_t artisan_drum_value = 50;    // Default drum value (50%)
+
+// Send HP command to Artisan (Heater Power)
+void send_hp_command(uint8_t hp_value) {
+    tap_code(KC_H);  // HP command
+    if (hp_value >= 100) {
+        tap_code(KC_1);
+        tap_code(KC_0);
+        tap_code(KC_0);
+    } else if (hp_value >= 10) {
+        tap_code(KC_0 + (hp_value / 10));  // Tens digit
+        tap_code(KC_0 + (hp_value % 10));  // Ones digit
+    } else {
+        tap_code(KC_0);
+        tap_code(KC_0 + hp_value);         // Single digit
+    }
+}
+
+// Send Air command to Artisan
+void send_air_command(uint8_t air_value) {
+    tap_code(KC_A);  // Air command
+    if (air_value >= 100) {
+        tap_code(KC_1);
+        tap_code(KC_0);
+        tap_code(KC_0);
+    } else if (air_value >= 10) {
+        tap_code(KC_0 + (air_value / 10));  // Tens digit
+        tap_code(KC_0 + (air_value % 10));  // Ones digit
+    } else {
+        tap_code(KC_0);
+        tap_code(KC_0 + air_value);         // Single digit
+    }
+}
+
+// Send Drum command to Artisan
+void send_drum_command(uint8_t drum_value) {
+    tap_code(KC_D);  // Drum command
+    if (drum_value >= 100) {
+        tap_code(KC_1);
+        tap_code(KC_0);
+        tap_code(KC_0);
+    } else if (drum_value >= 10) {
+        tap_code(KC_0 + (drum_value / 10));  // Tens digit
+        tap_code(KC_0 + (drum_value % 10));  // Ones digit
+    } else {
+        tap_code(KC_0);
+        tap_code(KC_0 + drum_value);         // Single digit
+    }
+}
